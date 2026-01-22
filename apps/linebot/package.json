@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/app.ts",
-    "build": "pnpm prisma:generate && tsc",
+    "build": "npm run prisma:generate && tsc",
     "start": "node dist/app.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "postinstall": "pnpm prisma:generate || true",
+    "postinstall": "npm run prisma:generate || true",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
