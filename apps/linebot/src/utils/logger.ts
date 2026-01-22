@@ -270,3 +270,6 @@ export const logger = new Logger('linebot');
 export function createLogger(serviceName: string): Logger {
   return new Logger(serviceName);
 }
+
+// 導出 Logger 類以便訪問靜態方法
+export { Logger };

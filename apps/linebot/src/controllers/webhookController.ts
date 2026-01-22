@@ -3,14 +3,14 @@ import { WebhookEvent, MessageEvent, TextEventMessage } from '@line/bot-sdk';
 import { LineService } from '../services/lineService.js';
 import { ReplyStrategy } from '../utils/replyStrategy.js';
 import { prisma } from '../config/database.config.js';
-import { logger } from '../utils/logger.js';
+import { logger, Logger } from '../utils/logger.js';
 
 const router = express.Router();
 
 // Line Webhook 處理器
 router.post('/', async (req, res) => {
   const events: WebhookEvent[] = req.body.events;
-  const traceId = logger.generateTraceId();
+  const traceId = Logger.generateTraceId();
 
   logger.info('Line webhook received', { 
     traceId,
