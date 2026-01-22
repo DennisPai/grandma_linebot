@@ -6,6 +6,7 @@ import { middleware } from '@line/bot-sdk';
 import { middlewareConfig } from './config/line.config.js';
 import { prisma } from './config/database.config.js';
 import { ModelConfigService } from './config/models.config.js';
+import { initializeDatabase } from './utils/dbInit.js';
 import webhookRouter from './controllers/webhookController.js';
 import cronRouter from './controllers/cronController.js';
 
@@ -100,7 +101,21 @@ app.listen(PORT, () => {
 prisma.$connect()
   .then(async () => {
     console.log('✅ Database connected');
+    
+    // 初始化資料庫 schema（創建所有表）
+    try {
+      await initializeDatabase();
+    } catch (error) {
+      console.error('⚠️ Database initialization failed, but continuing...', error);
+      // 不阻止應用啟動，允許後續手動修復
+    }
+    
     // 初始化預設模型配置
-    await ModelConfigService.initializeDefaultConfig();
+    try {
+      await ModelConfigService.initializeDefaultConfig();
+    } catch (error) {
+      console.error('⚠️ Model config initialization failed:', error);
+      // 如果表不存在，這裡會失敗，但已經在上面嘗試創建了
+    }
   })
   .catch((err) => console.error('❌ Database connection failed:', err));
