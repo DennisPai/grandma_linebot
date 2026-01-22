@@ -1,5 +1,5 @@
 import { createCanvas, loadImage, GlobalFonts, Canvas, SKRSContext2D } from '@napi-rs/canvas';
-import type { TextLayout, TextLine } from '@grandma-linebot/shared';
+import type { TextLayout, TextLine } from '../types/index.js';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -64,7 +64,7 @@ export class TextRendererService {
       }
 
       // 返回 JPEG Buffer
-      return canvas.toBuffer('image/jpeg', { quality: 0.95 });
+      return canvas.toBuffer('image/jpeg', 95);
     } catch (error: any) {
       console.error('❌ Text rendering failed:', error);
       throw error;
@@ -157,6 +157,6 @@ export class TextRendererService {
 
     this.drawTextLine(ctx, testLine, 800, 600);
 
-    return canvas.toBuffer('image/jpeg', { quality: 0.95 });
+    return canvas.toBuffer('image/jpeg', 95);
   }
 }

@@ -1,4 +1,5 @@
-import { RetrievalService, type RetrievalOptions } from '@grandma-linebot/rag-engine';
+import { RetrievalService } from './retrievalService.js';
+import type { RetrievalOptions } from '../types/index.js';
 import { prisma } from '../config/database.config.js';
 
 export class RAGService {
@@ -23,7 +24,7 @@ export class RAGService {
       }
 
       // 2. 從資料庫載入完整文檔資訊
-      const documentIds = results.map(r => parseInt(r.id)).filter(id => !isNaN(id));
+      const documentIds = results.map((r: { id: string }) => parseInt(r.id)).filter((id: number) => !isNaN(id));
 
       const documents = await prisma.document.findMany({
         where: {

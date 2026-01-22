@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { uploadBufferToGoogleDrive } from '@grandma-linebot/google-drive';
+import { uploadBufferToGoogleDrive } from '../utils/googleDrive.js';
 import { prisma } from '../config/database.config.js';
-import type { ImageGenerationOptions, TextLayout } from '@grandma-linebot/shared';
+import type { ImageGenerationOptions, TextLayout } from '../types/index.js';
 
 export class ElderMemeService {
   /**

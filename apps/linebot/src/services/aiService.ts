@@ -3,7 +3,7 @@ import { getGeminiClient, getModelConfig } from '../config/gemini.config.js';
 import { prisma } from '../config/database.config.js';
 import { PromptBuilder } from '../utils/promptBuilder.js';
 import { RAGService } from './ragService.js';
-import type { ConversationContext, UserProfile } from '@grandma-linebot/shared';
+import type { ConversationContext, UserProfile } from '../types/index.js';
 
 export class AIService {
   /**

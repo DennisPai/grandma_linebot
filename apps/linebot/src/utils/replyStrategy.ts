@@ -5,7 +5,7 @@ import { MemoryService } from '../services/memoryService.js';
 import { UserProfileService } from '../services/userProfileService.js';
 import { prisma } from '../config/database.config.js';
 import { logger } from './logger.js';
-import type { UserProfile, Message } from '@grandma-linebot/shared';
+import type { UserProfile, Message } from '../types/index.js';
 
 const REPLY_TIMEOUT = 25000; // 25 秒安全邊界
 

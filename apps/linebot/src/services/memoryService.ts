@@ -1,5 +1,5 @@
 import { prisma } from '../config/database.config.js';
-import type { Message, UserProfile } from '@grandma-linebot/shared';
+import type { Message, UserProfile } from '../types/index.js';
 
 export class MemoryService {
   /**

@@ -1,8 +1,8 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { getGeminiClient } from '../config/gemini.config.js';
-import { uploadBufferToGoogleDrive, uploadImageURLToGoogleDrive } from '@grandma-linebot/google-drive';
+import { uploadBufferToGoogleDrive, uploadImageURLToGoogleDrive } from '../utils/googleDrive.js';
 import { prisma } from '../config/database.config.js';
-import type { ImageGenerationOptions } from '@grandma-linebot/shared';
+import type { ImageGenerationOptions } from '../types/index.js';
 
 export class ImageService {
   /**
