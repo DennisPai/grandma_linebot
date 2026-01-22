@@ -8,6 +8,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["linebot"]
 }
 
 // 用戶資料表
@@ -23,6 +24,7 @@ model User {
   morningSchedule MorningSchedule?
   
   @@index([lastActiveAt])
+  @@schema("linebot")
 }
 
 // 對話記錄表
@@ -46,6 +48,7 @@ model Conversation {
   
   @@index([userId, timestamp])
   @@index([status])
+  @@schema("linebot")
 }
 
 // 早安訊息排程表
@@ -58,6 +61,8 @@ model MorningSchedule {
   enabled         Boolean  @default(true)
   
   user            User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  
+  @@schema("linebot")
 }
 
 // 文檔知識庫表
@@ -82,6 +87,7 @@ model Document {
   
   @@index([category])
   @@index([isIndexed])
+  @@schema("linebot")
 }
 
 // 待審核訊息表
@@ -104,6 +110,7 @@ model PendingMessage {
   
   @@index([status, scheduledAt])
   @@index([userId])
+  @@schema("linebot")
 }
 
 // 後台管理員表
@@ -119,6 +126,7 @@ model AdminUser {
   lastLoginAt     DateTime @default(now())
   
   @@unique([provider, providerId])
+  @@schema("linebot")
 }
 
 // 系統配置表
@@ -133,6 +141,7 @@ model SystemConfig {
   createdAt       DateTime @default(now())
   
   @@index([key])
+  @@schema("linebot")
 }
 
 // API 使用記錄表
@@ -152,6 +161,7 @@ model APIUsageLog {
   @@index([service, timestamp])
   @@index([tier, timestamp])
   @@index([userId, timestamp])
+  @@schema("linebot")
 }
 
 // 系統日誌表
@@ -170,4 +180,5 @@ model SystemLog {
   @@index([service, timestamp])
   @@index([userId, timestamp])
   @@index([traceId])
+  @@schema("linebot")
 }
