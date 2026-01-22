@@ -1,5 +1,5 @@
 import { Client, TextMessage, ImageMessage } from '@line/bot-sdk';
-import { ConfigLoader } from '../config/configLoader.js';
+import { configLoader } from '../config/configLoader.js';
 
 let lineClient: Client | null = null;
 
@@ -14,7 +14,7 @@ async function getLineClient(): Promise<Client> {
 
   try {
     // 優先從資料庫載入配置
-    const config = await ConfigLoader.loadConfigs([
+    const config = await configLoader.loadConfigs([
       'LINE_CHANNEL_SECRET',
       'LINE_CHANNEL_ACCESS_TOKEN'
     ]);
