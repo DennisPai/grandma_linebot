@@ -34,7 +34,7 @@ export default function AIButlerPage() {
         },
         body: JSON.stringify({
           message: userMessage,
-          conversationHistory: messages.map(m => ({
+          conversationHistory: messages.map((m: any) => ({
             role: m.role,
             parts: [{ text: m.content }]
           }))
@@ -71,7 +71,7 @@ export default function AIButlerPage() {
           onChange={(e) => setSelectedModel(e.target.value)}
           className="px-4 py-2 border rounded-lg bg-white"
         >
-          {models.map(m => (
+          {models.map((m: any) => (
             <option key={m.value} value={m.value}>{m.label}</option>
           ))}
         </select>

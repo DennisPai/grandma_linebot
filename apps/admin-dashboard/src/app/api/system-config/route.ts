@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     });
     
     // 遮蔽敏感資訊
-    const maskedConfigs = configs.map(config => {
+    const maskedConfigs = configs.map((config: any) => {
       let displayValue = config.value;
       
       // 如果是加密的，不顯示原始值
