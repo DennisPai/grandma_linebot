@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { middleware } from '@line/bot-sdk';
-import { lineConfig } from './config/line.config.js';
+import { middlewareConfig } from './config/line.config.js';
 import { prisma } from './config/database.config.js';
 import { ModelConfigService } from './config/models.config.js';
 import webhookRouter from './controllers/webhookController.js';
@@ -27,7 +27,7 @@ app.get('/health', (req, res) => {
 });
 
 // Line webhook - 使用 Line SDK 的 middleware 進行簽名驗證
-app.use('/webhook/line', middleware(lineConfig), webhookRouter);
+app.use('/webhook/line', middleware(middlewareConfig), webhookRouter);
 
 // Cron endpoints (供 n8n 呼叫)
 app.use('/api/cron', cronRouter);

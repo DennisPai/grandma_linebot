@@ -17,7 +17,7 @@ export class ReplyStrategy {
   static async handleIncomingMessage(event: MessageEvent, traceId: string): Promise<void> {
     const message = event.message as TextEventMessage;
     const userId = event.source.userId!;
-    const replyToken = event.replyToken;
+    const replyToken = event.replyToken!; // MessageEvent 保證有 replyToken
     const startTime = Date.now();
     let hasReplied = false;
 

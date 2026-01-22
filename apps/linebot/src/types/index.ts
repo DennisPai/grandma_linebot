@@ -5,7 +5,7 @@
 
 // ===== Message 和對話相關類型 =====
 export interface Message {
-  id?: string;
+  id?: string | number;
   userId: string;
   role: 'user' | 'assistant' | 'system';
   content: string;

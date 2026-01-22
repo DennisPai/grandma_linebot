@@ -10,7 +10,7 @@ const router = express.Router();
 // Line Webhook 處理器
 router.post('/', async (req, res) => {
   const events: WebhookEvent[] = req.body.events;
-  const traceId = logger.constructor.generateTraceId();
+  const traceId = logger.generateTraceId();
 
   logger.info('Line webhook received', { 
     traceId,
@@ -174,8 +174,8 @@ async function handleFollowEvent(event: WebhookEvent, traceId: string) {
       displayName: profile?.displayName
     });
 
-    // 發送歡迎訊息
-    if (event.replyToken) {
+    // 發送歡迎訊息（使用類型守衛確保 replyToken 存在）
+    if ('replyToken' in event && event.replyToken) {
       await LineService.replyMessage(
         event.replyToken,
         LineService.createTextMessage('姐姐好！我是阿東，很高興認識你 😊')
