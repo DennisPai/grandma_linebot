@@ -19,6 +19,24 @@ router.post('/', async (req, res) => {
     eventCount: events.length
   });
 
+  // 檢查 Line 配置是否已設定
+  const hasConfig = process.env.LINE_CHANNEL_SECRET && 
+                   process.env.LINE_CHANNEL_SECRET !== 'temp_secret_will_be_loaded_from_db';
+  
+  if (!hasConfig) {
+    logger.warn('Line configuration not set, rejecting webhook', {
+      traceId,
+      service: 'linebot',
+      action: 'config_missing'
+    });
+    
+    res.status(503).json({
+      error: 'Line Bot not configured',
+      message: 'Please configure Line credentials in admin dashboard'
+    });
+    return;
+  }
+
   try {
     // 處理所有事件（並行處理以提升效能）
     await Promise.all(events.map(event => handleEvent(event, traceId)));
