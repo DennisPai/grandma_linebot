@@ -12,7 +12,8 @@ export async function initializeDatabase(): Promise<void> {
   
   try {
     // 使用 prisma db push 創建所有表結構
-    const { stdout, stderr } = await execAsync('npx prisma db push --accept-data-loss --skip-generate');
+    // 注意：只在全新資料庫或 schema 匹配時才會成功
+    const { stdout, stderr } = await execAsync('npx prisma db push --skip-generate');
     
     if (stdout) {
       console.log(stdout);
