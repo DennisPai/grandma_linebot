@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "npm run prisma:generate && next build",
+    "build": "npx prisma generate --schema=../linebot/prisma/schema.prisma && next build",
     "start": "next start -p 3001",
     "lint": "next lint",
-    "prisma:generate": "prisma generate --schema=../../apps/linebot/prisma/schema.prisma",
-    "postinstall": "npm run prisma:generate || true",
+    "prisma:generate": "npx prisma generate --schema=../linebot/prisma/schema.prisma",
+    "postinstall": "npx prisma generate --schema=../linebot/prisma/schema.prisma || true",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
