@@ -5,18 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/app.ts",
-    "build": "npm run prisma:generate && tsc",
+    "build": "npm run prisma:generate && npx tsc",
     "start": "npm run db:push && node dist/app.js",
-    "db:push": "prisma db push --accept-data-loss",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate deploy",
+    "db:push": "npx prisma db push --accept-data-loss",
+    "prisma:generate": "npx prisma generate",
+    "prisma:migrate": "npx prisma migrate deploy",
     "postinstall": "npm run prisma:generate || true",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
     "@line/bot-sdk": "^9.0.0",
     "@google/generative-ai": "^0.21.0",
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "5.22.0",
     "express": "^4.19.2",
     "@napi-rs/canvas": "^0.1.58",
     "sharp": "^0.33.5",
@@ -33,6 +33,6 @@
     "@types/cors": "^2.8.17",
     "typescript": "^5.5.0",
     "tsx": "^4.16.0",
-    "prisma": "^5.22.0"
+    "prisma": "5.22.0"
   }
 }
