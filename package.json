@@ -1,0 +1,18 @@
+{
+  "name": "grandma-linebot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-powered Line bot simulating '阿東' character with admin dashboard",
+  "scripts": {
+    "dev": "pnpm --parallel --filter linebot dev --filter admin-dashboard dev",
+    "build": "pnpm --recursive build",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "deploy:n8n": "pnpm --filter n8n-workflows deploy"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

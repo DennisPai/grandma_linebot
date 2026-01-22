@@ -1,0 +1,46 @@
+name: grandma-linebot
+
+services:
+  linebot-api:
+    name: linebot-api
+    build:
+      buildCommand: pnpm install && pnpm --filter linebot prisma:generate && pnpm --filter linebot build
+      outputDirectory: apps/linebot/dist
+    start:
+      command: node apps/linebot/dist/app.js
+    ports:
+      - 3000
+    env:
+      # 資料庫連線（由 Zeabur PostgreSQL 服務自動注入）
+      - DATABASE_URL
+      # 加密金鑰（用於配置加密，請在 Zeabur 環境變數中設定）
+      - ENCRYPTION_KEY
+      # ChromaDB 路徑
+      - CHROMA_DB_PATH=/app/data/chroma
+      # 其他配置將從資料庫載入（透過後台系統設定頁面配置）
+    volumes:
+      - name: linebot-data
+        mountPath: /app/data
+
+  admin-dashboard:
+    name: admin-dashboard
+    build:
+      buildCommand: pnpm install && pnpm --filter admin-dashboard build
+      outputDirectory: apps/admin-dashboard/.next
+    start:
+      command: pnpm --filter admin-dashboard start
+    ports:
+      - 3001
+    env:
+      # 資料庫連線（由 Zeabur PostgreSQL 服務自動注入）
+      - DATABASE_URL
+      # NextAuth 基本配置（請在 Zeabur 環境變數中設定）
+      - NEXTAUTH_SECRET
+      - NEXTAUTH_URL
+      # 加密金鑰（與 linebot-api 使用相同金鑰）
+      - ENCRYPTION_KEY
+      # 其他配置將從資料庫載入（透過後台系統設定頁面配置）
+
+volumes:
+  - name: linebot-data
+    size: 5Gi

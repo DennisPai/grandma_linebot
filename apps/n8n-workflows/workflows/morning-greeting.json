@@ -1,0 +1,149 @@
+{
+  "name": "早安訊息排程",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/5 6-9 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "id": "schedule-trigger-1"
+    },
+    {
+      "parameters": {
+        "url": "={{$env.LINEBOT_API_URL}}/api/cron/check-morning-schedule",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "name": "Check Users Need Greeting",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [450, 300],
+      "id": "check-users-1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "internal-api-auth",
+          "name": "Internal API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "name": "Loop Users",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [650, 300],
+      "id": "loop-users-1"
+    },
+    {
+      "parameters": {
+        "url": "={{$env.LINEBOT_API_URL}}/api/messages/generate-morning",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"userId\": $json.userId } }}",
+        "options": {}
+      },
+      "name": "Generate Morning Message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [850, 300],
+      "id": "generate-morning-1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "internal-api-auth",
+          "name": "Internal API Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{$env.LINEBOT_API_URL}}/api/messages/pending",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"userId\": $json.userId,\n  \"content\": $json.message,\n  \"imageUrl\": $json.imageUrl,\n  \"messageType\": \"morning\"\n} }}",
+        "options": {}
+      },
+      "name": "Create Pending Approval",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1050, 300],
+      "id": "create-pending-1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "internal-api-auth",
+          "name": "Internal API Auth"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Users Need Greeting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Users Need Greeting": {
+      "main": [
+        [
+          {
+            "node": "Loop Users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Users": {
+      "main": [
+        [
+          {
+            "node": "Generate Morning Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Morning Message": {
+      "main": [
+        [
+          {
+            "node": "Create Pending Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}

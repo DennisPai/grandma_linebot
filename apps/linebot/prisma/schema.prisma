@@ -1,0 +1,173 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用戶資料表
+model User {
+  userId          String   @id
+  displayName     String?
+  firstContactAt  DateTime @default(now())
+  lastActiveAt    DateTime @updatedAt
+  profileSummary  Json?    // AI 提取的用戶畫像
+  preferences     Json?    // 用戶偏好設定
+  
+  conversations   Conversation[]
+  morningSchedule MorningSchedule?
+  
+  @@index([lastActiveAt])
+}
+
+// 對話記錄表
+model Conversation {
+  id              Int      @id @default(autoincrement())
+  userId          String
+  role            String   // 'user' | 'assistant' | 'system'
+  content         String   @db.Text
+  hasImage        Boolean  @default(false)
+  imageUrl        String?
+  metadata        Json?    // 額外資訊（如情緒分析、主題標籤）
+  
+  // 審核相關
+  status          String   @default("approved") // 'approved' | 'pending' | 'rejected' | 'edited'
+  originalContent String?  @db.Text  // 如果被編輯，保留原始內容
+  editedBy        String?  // 管理員 ID
+  editedAt        DateTime?
+  
+  timestamp       DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  
+  @@index([userId, timestamp])
+  @@index([status])
+}
+
+// 早安訊息排程表
+model MorningSchedule {
+  userId          String   @id
+  nextSendTime    DateTime
+  sendWindowStart String   // "06:30"
+  sendWindowEnd   String   // "08:30"
+  timezone        String   @default("Asia/Taipei")
+  enabled         Boolean  @default(true)
+  
+  user            User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+}
+
+// 文檔知識庫表
+model Document {
+  id              Int      @id @default(autoincrement())
+  title           String
+  content         String   @db.Text
+  category        String   // 文檔分類（自由定義）
+  tags            String[]
+  
+  // RAG 相關
+  isIndexed       Boolean  @default(false)
+  chromaId        String?  @unique
+  
+  // 使用統計
+  referenceCount  Int      @default(0)
+  lastUsedAt      DateTime?
+  
+  uploadedBy      String
+  uploadedAt      DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([category])
+  @@index([isIndexed])
+}
+
+// 待審核訊息表
+model PendingMessage {
+  id              Int      @id @default(autoincrement())
+  userId          String
+  messageType     String   // 'morning' | 'reply' | 'proactive'
+  content         String   @db.Text
+  imageUrl        String?
+  
+  // 審核狀態
+  status          String   @default("pending") // 'pending' | 'approved' | 'rejected' | 'sent'
+  approvedBy      String?
+  reviewedAt      DateTime?
+  
+  scheduledAt     DateTime?
+  sentAt          DateTime?
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([status, scheduledAt])
+  @@index([userId])
+}
+
+// 後台管理員表
+model AdminUser {
+  id              String   @id @default(uuid())
+  email           String   @unique
+  name            String
+  provider        String   // 'google' | 'line'
+  providerId      String
+  role            String   @default("admin") // 'admin' | 'viewer'
+  
+  createdAt       DateTime @default(now())
+  lastLoginAt     DateTime @default(now())
+  
+  @@unique([provider, providerId])
+}
+
+// 系統配置表
+model SystemConfig {
+  id              Int      @id @default(autoincrement())
+  key             String   @unique  // 配置鍵名
+  value           String   @db.Text // 配置值（JSON 格式）
+  description     String?  // 配置說明
+  isEncrypted     Boolean  @default(false) // 是否加密儲存
+  updatedBy       String?  // 最後更新者
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  
+  @@index([key])
+}
+
+// API 使用記錄表
+model APIUsageLog {
+  id              Int      @id @default(autoincrement())
+  service         String   // 'gemini' | 'banana_pro' | 'line_api' | 'elder_meme_generation'
+  model           String   // 使用的模型名稱
+  tier            String   // 'free' | 'paid'
+  operation       String?  // 操作類型（如 'chat', 'embedding', 'image_generation', 'realistic_photo', 'elder_meme_complete'）
+  tokensUsed      Int?     // 使用的 token 數量
+  cost            Float    @default(0) // 成本（美元）
+  userId          String?  // 關聯的用戶 ID（如果適用）
+  success         Boolean  @default(true) // 是否成功
+  errorMessage    String?  // 錯誤訊息（如果失敗）
+  timestamp       DateTime @default(now())
+  
+  @@index([service, timestamp])
+  @@index([tier, timestamp])
+  @@index([userId, timestamp])
+}
+
+// 系統日誌表
+model SystemLog {
+  id          Int      @id @default(autoincrement())
+  level       String   // 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'FATAL'
+  service     String   // 'linebot' | 'admin-dashboard' | 'n8n' | 'rag-engine'
+  message     String   @db.Text
+  metadata    Json?    // 額外資訊（結構化資料）
+  traceId     String?  // 追蹤 ID（用於串連多個相關日誌）
+  userId      String?  // 相關用戶 ID
+  stackTrace  String?  @db.Text // 錯誤堆疊（ERROR 和 FATAL 等級）
+  timestamp   DateTime @default(now())
+  
+  @@index([level, timestamp])
+  @@index([service, timestamp])
+  @@index([userId, timestamp])
+  @@index([traceId])
+}
