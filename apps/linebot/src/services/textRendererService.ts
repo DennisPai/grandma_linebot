@@ -1,4 +1,4 @@
-import { createCanvas, loadImage, registerFont, Canvas, CanvasRenderingContext2D } from 'canvas';
+import { createCanvas, loadImage, GlobalFonts, Canvas, SKRSContext2D } from '@napi-rs/canvas';
 import type { TextLayout, TextLine } from '@grandma-linebot/shared';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -18,17 +18,18 @@ export class TextRendererService {
     try {
       const assetsPath = join(__dirname, '../../assets/fonts');
       
+      // 使用 @napi-rs/canvas 的 GlobalFonts API
       // 註冊思源黑體粗體
-      registerFont(join(assetsPath, 'NotoSansTC-Bold.ttf'), {
-        family: 'Noto Sans TC',
-        weight: 'bold'
-      });
+      GlobalFonts.registerFromPath(
+        join(assetsPath, 'NotoSansTC-Bold.ttf'),
+        'Noto Sans TC'
+      );
 
       // 註冊思源黑體常規
-      registerFont(join(assetsPath, 'NotoSansTC-Regular.ttf'), {
-        family: 'Noto Sans TC',
-        weight: 'normal'
-      });
+      GlobalFonts.registerFromPath(
+        join(assetsPath, 'NotoSansTC-Regular.ttf'),
+        'Noto Sans TC'
+      );
 
       this.fontsRegistered = true;
       console.log('✅ Fonts registered successfully');
@@ -74,7 +75,7 @@ export class TextRendererService {
    * 繪製單行文字
    */
   private static drawTextLine(
-    ctx: CanvasRenderingContext2D,
+    ctx: SKRSContext2D,
     line: TextLine,
     canvasWidth: number,
     canvasHeight: number
