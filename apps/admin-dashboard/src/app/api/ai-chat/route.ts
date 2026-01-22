@@ -136,7 +136,7 @@ function buildSystemInstruction(context: any): string {
   }
 
   if (context.documents.length > 0) {
-    instruction += `\n【知識庫文檔】\n${JSON.stringify(context.documents.map(d => ({
+    instruction += `\n【知識庫文檔】\n${JSON.stringify(context.documents.map((d: any) => ({
       id: d.id,
       title: d.title,
       category: d.category,
